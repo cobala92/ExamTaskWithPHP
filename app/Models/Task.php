@@ -22,4 +22,9 @@ class Task extends Model
         'estimate',
         'actual',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'assignee', 'id');
+    }
 }
