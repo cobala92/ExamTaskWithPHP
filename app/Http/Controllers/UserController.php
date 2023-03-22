@@ -37,13 +37,7 @@ class UserController extends BaseController
 
     public function update(Request $request, $id)
     {
-        return User::find($id)->update(
-            [
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $request->password
-            ],
-        );
+        return User::where('id', $id)->update(request()->all());
     }
 
     public function destroy($id)
