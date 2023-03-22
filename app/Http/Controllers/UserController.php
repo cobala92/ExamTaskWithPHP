@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\response\UserResponse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -34,7 +35,7 @@ class UserController extends BaseController
         if ($validator->fails()) {
             return $validator->messages();
         }
-        return User::create($request->all());
+        return new UserResponse(User::create($request->all()));
     }
 
     public function update(Request $request, $id)

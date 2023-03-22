@@ -30,7 +30,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'id',
+        'uuid',
         'remember_token',
     ];
 
@@ -56,4 +57,5 @@ class User extends Authenticatable
             $model->uuid = Str::uuid();
         });
     }
+
 }
