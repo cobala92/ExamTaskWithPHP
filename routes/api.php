@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\TaskOfUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +24,17 @@ use App\Http\Controllers\Controller;
 Route::resource('users', UserController::class)->only([
     'index', 'show', 'store', 'update', 'destroy'
 ]);
-Route::resource('taskofuser', Controller::class)->only([
-    'index', 'show'
-]);
+// Route::resource('taskofuser', TaskOfUserController::class)->only([
+//     'index', 'show', 'detail'
+// ]);
 Route::resource('tasks', TaskController::class)->only([
     'index', 'show', 'store', 'update', 'destroy'
 ]);
+Route::get(
+    '/user/task',
+    [TaskController::class, 'getListTaskOfUser']
+);
+Route::get(
+    '/user/{id}/task',
+    [TaskController::class, 'getListTaskByUser']
+);

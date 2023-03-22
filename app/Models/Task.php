@@ -25,6 +25,6 @@ class Task extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User', 'assignee', 'id');
+        return $this->belongsTo('App\Models\User', 'id');
     }
 }
