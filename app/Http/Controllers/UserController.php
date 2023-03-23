@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostUserRequest;
 use App\Models\User;
 use App\Http\Resources\UserResponse;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends BaseController
 {
@@ -21,21 +23,12 @@ class UserController extends BaseController
         return User::find($id);
     }
 
-    public function store(Request $request)
+    public function store(PostUserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-
-        if ($validator->fails()) {
-            return $validator->messages();
-        }
         return new UserResponse(User::create($request->all()));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
         return User::where('id', $id)->update(request()->all());
     }
