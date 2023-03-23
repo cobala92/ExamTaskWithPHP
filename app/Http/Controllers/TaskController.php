@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Routing\Controller as BaseController;
+use App\Http\Requests\PostTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -31,21 +33,9 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostTaskRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|max:100',
-            'description' => 'required|max:500',
-            'status' => 'required',
-            'status.*' => Rule::in([0, 1]),
-            'assignee' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $validator->messages();
-        }
-        $data = $request->all();
-        return Task::create($data);
+        return Task::create($request->all());
     }
 
     /**
@@ -59,7 +49,7 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateTaskRequest $request, string $id)
     {
         return Task::find($id)->update(
             [
