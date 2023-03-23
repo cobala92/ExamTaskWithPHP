@@ -16,25 +16,14 @@ use App\Http\Controllers\TaskOfUserController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::resource('users', UserController::class)->only([
-    'index', 'show', 'store', 'update', 'destroy'
+    'index', 'show', 'store'
 ]);
-// Route::resource('taskofuser', TaskOfUserController::class)->only([
-//     'index', 'show', 'detail'
-// ]);
 Route::resource('tasks', TaskController::class)->only([
     'index', 'show', 'store', 'update', 'destroy'
 ]);
-Route::get(
-    '/user/task',
-    [TaskController::class, 'getListTaskOfUser']
-);
-Route::get(
-    '/user/{id}/task',
-    [TaskController::class, 'getListTaskByUser']
-);
+Route::group(['middleware' => 'uuid'], function () {
+    Route::put('users/{id}', 'App\Http\Controllers\UserController@update');
+    Route::get('user/tasks', 'App\Http\Controllers\TaskController@getListTaskOfUser');
+    Route::get('user/{id}/tasks', 'App\Http\Controllers\TaskController@getListTaskByUser');
+});
