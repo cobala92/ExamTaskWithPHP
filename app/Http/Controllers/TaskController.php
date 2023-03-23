@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Routing\Controller as BaseController;
 
 class TaskController extends Controller
 {
@@ -18,11 +19,11 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $task = Task::query();
-        if($request -> has('title')){
-            $task-> where('title', 'LIKE', '%'.$request->title.'%');
+        if ($request->has('title')) {
+            $task->where('title', 'LIKE', '%' . $request->title . '%');
         }
-        if($request->has('status')){
-            $task-> where('status', 'LIKE', '%'.$request->status.'%');
+        if ($request->has('status')) {
+            $task->where('status', 'LIKE', '%' . $request->status . '%');
         }
         return  $task->get();
     }
@@ -37,20 +38,20 @@ class TaskController extends Controller
             'description' => 'required|max:500',
             'status' => 'required',
             'status.*' => Rule::in([0, 1]),
+            'assignee' => 'required',
         ]);
 
         if ($validator->fails()) {
             return $validator->messages();
         }
         $data = $request->all();
-        $data['assignee'] = User::first()->id;
         return Task::create($data);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
         return Task::find($id);
     }
@@ -80,4 +81,27 @@ class TaskController extends Controller
     {
         return Task::find($id)->delete();
     }
+    public function getListTaskOfUser()
+    {
+        return User::with('tasks')->get();
+    }
+
+    public function getListTaskByUser(Request $request, $id)
+    {
+        return Task::select('tasks.*')
+        ->join('users', 'users.id', 'assignee')
+        ->where('users.id', $id)
+        ->where(function($q) use ($request) {
+            if ($request->has('title')) {
+                $q->where('title', 'LIKE', '%' . $request->title . '%');
+            }
+            if ($request->has('description')) {
+                $q->where('description', 'LIKE', '%' . $request->description . '%');
+            }
+            if ($request->has('status')) {
+                $q->where('status', $request->status);
+            }
+        })->get();
+    }
+
 }

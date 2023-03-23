@@ -43,7 +43,7 @@ class User extends Authenticatable
 
     public function tasks()
     {
-        return $this->hasMany('App\Models\Task', 'id');
+        return $this->hasMany('App\Models\Task', 'assignee');
     }
 
     public static function boot()
