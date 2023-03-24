@@ -4,12 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Repository\UserRepository;
 use App\Http\Requests\PostUserRequest;
-use App\Models\User;
 use App\Http\Resources\UserResponse;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends BaseController
@@ -38,7 +34,7 @@ class UserController extends BaseController
         return new UserResponse($user);
     }
 
-    public function update($id, UpdateUserRequest $request)
+    public function update(UpdateUserRequest $request, $id)
     {
         return $this->userRepository->update($id, $request->all());
     }

@@ -2,96 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\User;
-use Illuminate\Auth\Events\Validated;
+use App\Http\Repository\TaskRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Routing\Controller as BaseController;
 use App\Http\Requests\PostTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    protected $taskRepository;
+
+    public function __construct(TaskRepository $taskRepository)
+    {
+        $this->taskRepository = $taskRepository;
+    }
+
     public function index(Request $request)
     {
-        $task = Task::query();
-        if ($request->has('title')) {
-            $task->where('title', 'LIKE', '%' . $request->title . '%');
-        }
-        if ($request->has('status')) {
-            $task->where('status', 'LIKE', '%' . $request->status . '%');
-        }
-        return  $task->get();
+        return $this->taskRepository->index($request);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(PostTaskRequest $request)
-    {
-        return Task::create($request->all());
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        return Task::find($id);
+        return $this->taskRepository->find($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    public function store(PostTaskRequest $request)
+    {
+        return $this->taskRepository->create($request->all());
+    }
+
     public function update(UpdateTaskRequest $request, string $id)
     {
-        return Task::find($id)->update(
-            [
-                'title' => $request->title,
-                'description' => $request->description,
-                'numbers' => $request->numbers,
-                'status' => $request->status,
-                'start_date' => $request->start_date,
-                'due_date' => $request->due_date,
-                'actual' => $request->actual,
-            ],
-        );
+        return $this->taskRepository->update($id, $request->all());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        return Task::find($id)->delete();
+        return $this->taskRepository->delete($id);
     }
+
     public function getListTaskOfUser()
     {
-        return User::with('tasks')->get();
+        return $this->taskRepository->getListTaskOfUser();
     }
 
     public function getListTaskByUser(Request $request, $id)
     {
-        return Task::select('tasks.*')
-        ->join('users', 'users.id', 'assignee')
-        ->where('users.id', $id)
-        ->where(function($q) use ($request) {
-            if ($request->has('title')) {
-                $q->where('title', 'LIKE', '%' . $request->title . '%');
-            }
-            if ($request->has('description')) {
-                $q->where('description', 'LIKE', '%' . $request->description . '%');
-            }
-            if ($request->has('status')) {
-                $q->where('status', $request->status);
-            }
-        })->get();
+        return $this->taskRepository->getListTaskByUser($request, $id);
     }
-
 }
