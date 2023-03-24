@@ -23,7 +23,7 @@ class PostUserRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'password' => 'required|min:6',
+            'password' => 'required|regex:/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/',
             'email' => 'required|email'
         ];
     }

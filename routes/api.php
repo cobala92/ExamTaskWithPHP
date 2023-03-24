@@ -17,7 +17,7 @@ use App\Http\Controllers\TaskOfUserController;
 |
 */
 Route::resource('users', UserController::class)->only([
-    'index', 'show', 'store'
+    'index', 'show', 'store', 'destroy'
 ]);
 Route::resource('tasks', TaskController::class)->only([
     'index', 'show', 'store', 'update', 'destroy'

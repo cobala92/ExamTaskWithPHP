@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repository\UserRepository;
 use App\Http\Requests\PostUserRequest;
 use App\Models\User;
 use App\Http\Resources\UserResponse;
@@ -13,35 +14,37 @@ use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends BaseController
 {
+
+    protected $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     public function index()
     {
-        return User::all();
+        return $this->userRepository->getAll();
     }
 
     public function show($id)
     {
-        return User::find($id);
+        return $this->userRepository->find($id);
     }
 
     public function store(PostUserRequest $request)
     {
-        return new UserResponse(User::create($request->all()));
+        $user = $this->userRepository->create($request->all());
+        return new UserResponse($user);
     }
 
-    public function update(UpdateUserRequest $request, $id)
+    public function update($id, UpdateUserRequest $request)
     {
-        return User::where('id', $id)->update(request()->all());
+        return $this->userRepository->update($id, $request->all());
     }
 
     public function destroy($id)
     {
-        $user = User::find($id);
-        if ($user->first()) {
-            return $user->delete();
-        } else {
-            return Response::json([
-                'data' => 'User not found'
-            ], 404);
-        }
+        return $this->userRepository->delete($id);
     }
 }
